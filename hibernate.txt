@@ -1,0 +1,76 @@
+ORM framwork - object relational mapping framework
+when you want to connect java with sql you need a connector - in this case the connector is jdbc.
+in java we have classes, objects but in databases we have tables.
+but to store classes you write quries to store them in database. So hibernate comes in hand to help you so you don't
+have to write any queries.(POJO's are objects)
+So hibernate helps you store data in the database for example sql without knowing sql language.
+
+Spring contine deja configurari pt hibernate
+
+mysql password:parola
+
+
+
+
+
+
+Hibernate caching:
+
+First level cache:
+if you want to acces the databases multiple times you can use catching so you don;t need to acces it multiple times.
+for example if you do this: "select * from student" one time and you want to execute that command again
+you should do it, and store it in a cache memory so you don;t need to waste time to execute the query again.
+This is provided by hibernate and it is called first level Cache; This is when one user calls "select * from student" in the same session.
+
+If we have 2 sessions this 2 sessions will have 2 different caches.
+if the first session runs a query and the second session runs the same query, the data wont be available in the session 2 first level cache so it will hit the database.
+if you want 2 sessions hibernate provides Second level Cacheing.
+Level one cacheing is by default in hibernate.
+What second level caching says: it doesnt matter how many sessions you have, all the sessions in the same application can share the second level caching.
+We need to use ehcache for this second level cacheing to get configured
+
+what to configured for second level cacheing:
+-pom.xml with ehcache
+	(see the pom.xml, am comentat "from here" "to here")
+
+-folosesc spring asa ca trb sa adaug in application.proprieties pentru spring urmatoarele 2 proprietati:
+		1. spring.jpa.properties.hibernate.cache.region.factory_class=jcache
+		2. spring.jpa.properties.hibernate.javax.cache.provider = org.ehcache.jsr107.EhcacheCachingProvider (specify which provider we are working with, in my case ehcache)
+		3. spring.jpa.properties.hibernate.javax.cache.missing_cache_strategy=create 
+-change entity because by default not every Entity is cachable. we have @Cacheble(telling that this class is eligible for caching) and @Cache(specify strategy) 
+
+Daca folosesc relatii de tip @ManyToOne sau @OneToMany trb sa pun si @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE) deasupra fiecarui camp ce are @ManyToOne sau @OneToMany
+
+Daca creez propriul query si vreau sa i se aplice second cache memory pentru ca cu ce am facut mai sus doar hibernate aplica second cache memory, atunci trebuie se adauga proprietatea:
+	1. spring.jpa.properties.hibernate.cache.use_query_cache=true
+	2. @QueryHints(@QueryHint(name = org.hibernate.annotations.QueryHints.CACHEABLE, value = "true")) sa pun anotatia asta inainte de query(din interfata StudentRepository)
+
+
+
+
+
+
+
+
+
+
+Hibernate query language(HQM):
+
+maybe you want to fetch some specific records not all records. Only one row. For this you need HQM.
+
+SQL:						HQL:
+sellect rollno from student			select rollno from Student
+	column	    table			       property    class
+							(field)
+
+select * from student		=>		from Student
+
+
+
+
+
+
+
+
+
+
